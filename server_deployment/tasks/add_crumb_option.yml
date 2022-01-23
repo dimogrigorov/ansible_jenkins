@@ -1,0 +1,37 @@
+- name: Install python-lxml package
+  package:
+    name: python-lxml
+    state: present
+
+- name: Add a 'crumbIssuer' element to the 'nodeProperties' element
+  xml:
+    path: "/var/lib/jenkins/config.xml"
+    xpath: /hudson/crumbIssuer  
+
+- name: Add an attribute 'hudson.security.csrf.DefaultCrumbIssuer' to the '/hudson/crumbIssuer' element
+  xml:
+    path: "/var/lib/jenkins/config.xml"
+    xpath: /hudson/crumbIssuer
+    attribute: class
+    value: hudson.security.csrf.DefaultCrumbIssuer
+
+- name: Add a 'excludeClientIPFromCrumb' element to the '/hudson/crumbIssuer' element 
+  xml:
+    path: "/var/lib/jenkins/config.xml"
+    xpath: /hudson/crumbIssuer/excludeClientIPFromCrumb
+
+- name: Restart jenkins service
+  service:
+    name: jenkins
+    state: restarted
+
+- name: Wait for Jenkins to start up before proceeding.
+  command: "curl -D - --silent --max-time 5 -k https://localhost:{{ jenkins_https_port }}/cli/"
+  args:
+    warn: false
+  register: result
+  until: (result.stdout.find("403 Forbidden") != -1) or (result.stdout.find("200 OK") != -1) and (result.stdout.find("Please wait while") == -1)
+  retries: 60
+  delay: 5
+  changed_when: false
+  check_mode: false

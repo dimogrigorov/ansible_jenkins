@@ -1,0 +1,30 @@
+[all:vars]
+proxmox_password={{ vault_proxmox_password }}
+internal_subnetmask={{ subnetmask }}
+fromVmid={{ from_vmid }}
+toVmid={{ to_vmid }}
+proxmox_node_name={{ node_name }}
+force_stop=True
+api_host={{ proxmox_node_ip }}
+storage={{ hdd_storage }}
+full_clone=no
+
+[all:children]
+SlaveVMsGroup
+PerimeterRouterGroup
+
+[all]
+localhost ansible_connection=local
+
+[SlaveVMsGroup:vars]
+name="{{ new_machine_name }}"
+workingFolder="/var/lib/jenkins"
+nodeDescription="No specific description"
+numExecutors=1
+labelString=dummySlave
+mode="NORMAL"
+retentionStrategy="Always"
+[SlaveVMsGroup]
+
+[PerimeterRouterGroup]
+perRouter ansible_host=10.69.181.31 ansible_connection=local

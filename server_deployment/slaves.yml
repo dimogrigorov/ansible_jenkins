@@ -1,0 +1,170 @@
+- hosts: jenkins-slaves
+  #  become: True
+  vars:
+    create_slave_script: |
+        import hudson.model.*
+        import hudson.slaves.*
+        Slave agent = new DumbSlave("${name}", "${workingFolder}", new hudson.slaves.JNLPLauncher())
+        //agent.nodeDescription = ""
+        agent.numExecutors = "${numExecutors}" as Integer
+        agent.labelString = "${labelString}"
+        agent.mode = Node.Mode.NORMAL
+        agent.retentionStrategy = new RetentionStrategy.Always()
+        Jenkins.instance.addNode(agent)
+        return jenkins.model.Jenkins.getInstance().getComputer("${name}").getJnlpMac()
+
+  vars_prompt:
+  - name: "jenkins_user"
+    prompt: "Jenkins admin username?"
+    private: no
+    default: "admin"
+  - name: "jenkins_password"
+    prompt: "Jenkins admin password?"
+    private: yes
+    default: "admin"
+
+  tasks:
+    - name: Check that the host machine match playbook dependencies
+      import_tasks: tasks/execution_dependencies.yml
+      delegate_to: localhost
+      tags:
+        - dependencies
+
+    - name: Remove crumb option
+      import_tasks: tasks/remove_crumb_option.yml
+      delegate_to: "{{ hostvars[groups['jenkins-masters'][0]].ansible_host }}"
+      tags:
+        - remove_crumb_option
+   
+    - name: Create a Jenkins login user
+      user:
+        name: jenkins
+        password: "{{ slave_jenkins_password }}"
+        state: present
+        shell: /bin/bash       # Defaults to /bin/bash
+        system: no             # Defaults to no
+        createhome: yes        # Defaults to yes
+        home: /var/lib/jenkins
+      tags:
+        - jenkins-pass
+
+    - name: Configute NTP syncronization
+      include_role:
+        name: geerlingguy.ntp
+        apply:
+          tags:
+            - ntp
+
+    - name: Installing specific version of git
+      include_role:
+        name: geerlingguy.git
+        apply:
+          tags:
+           - git_installation
+
+    - hostname:
+        name: "{{ inventory_hostname }}"
+      tags:
+        - hostname
+
+    - name: Inlude git playbook installation and settings tasks
+      import_tasks: tasks/git_configuration.yml
+      tags:
+        - git_configuration
+
+    - name: Install qemu guest agent
+      include_role:
+        name: sbaerlocher.qemu-guest-agent
+        apply:
+          tags:
+          - qemu-guest
+
+    - name: Install rpm packages needed by arctic team slaves
+      import_tasks: arctic_specific_tasks/packages_installed_arctic.yml
+
+    - name: Java client certificates over HTTPS/SSL
+      import_tasks: tasks/java_certificates_and_security_over_https_ssl.yml
+      tags:
+        - java-cert-https-ssl
+
+    - name: Copying the files arctic wishes to be placed
+      import_tasks: arctic_specific_tasks/install_arctic_config.yml
+      tags:
+        - arctic-specific-files
+
+    - name: Creates bin directory
+      file:
+        path: /var/lib/jenkins/bin
+        state: directory
+
+#-------------------------------------------------------------------------#
+
+
+
+    - name: Use the variable as the script
+      jenkins_script:
+        script: "{{ create_slave_script }}"
+        args:
+          name: "{{ slave_machine_name }}"
+          workingFolder: "/var/lib/jenkins"
+          numExecutors: "{{ num_executors }}"
+          labelString: "{{ label }}"
+        user: "{{ jenkins_user }}"
+        password: "{{ jenkins_password }}"
+        url: "https://{{ fqdn }}:8443"
+        validate_certs: no
+      delegate_to: localhost
+      register: slave_secret_unformatted
+      tags:
+        - slave-annotations
+
+    - set_fact:
+        slave_secret: "{{ slave_secret_unformatted.output | regex_search('(?<=Result:\\s)[^\\n]*') }}"
+
+    - name: Copy Generic Agent File and set permissions
+      copy:
+        src: agent.jar
+        dest: /var/lib/jenkins/bin/
+        owner: jenkins
+        group: jenkins
+        mode: u=r,g=r,o=r
+
+    - name: Copy launch-agent.sh file on the slave
+      copy:
+        src: "{{ env_shell_file_name }}.sh"
+        dest: "/var/lib/jenkins/bin/launch-agent.sh"
+        owner: jenkins
+        group: jenkins
+        mode: u=rwx,g=r,o=r
+
+    - name: Copy service file from a template to the slave
+      template:
+        src: agent.service.j2
+        dest: "/etc/systemd/system/agent.service"
+        owner: jenkins
+        group: jenkins
+        mode: u=rw,g=r,o=r
+
+    - name: Initiate a jnlp connection to master jenkins instance
+      service:
+        name: agent.service
+        daemon_reload: yes
+        state: restarted
+
+    - name: change password for root user
+      user:
+        name: root
+        password: "{{ slave_root_password }}"
+      tags:
+        - root-pass
+
+    - name: Apply job restrictions per node
+      import_tasks: tasks/change_node_properties.yml
+      delegate_to: "{{ hostvars[groups['jenkins-masters'][0]].ansible_host }}"
+
+    - name: Add crumb option check back
+      import_tasks: tasks/add_crumb_option.yml
+      delegate_to: "{{ hostvars[groups['jenkins-masters'][0]].ansible_host }}"
+      tags:
+        - add_crumb_option
+

@@ -1,0 +1,40 @@
+### Disabled on Arctic Request
+
+- name: Create .ssh folder in the jenkins home folder on the server
+  file:
+    path: /root/.ssh
+    state: directory
+    owner: root
+    group: root
+    mode: u=rwx,g=,o=
+
+- name: Copy rsa private key on the server
+  copy:
+    src: ./files/ssh/id_rsa
+    dest: /root/.ssh/id_rsa
+    owner: root
+    group: root
+    mode: u=rw,g=,o=
+
+- name: Copy rsa public key on the server
+  copy:
+    src: ./files/ssh/id_rsa.pub
+    dest: /root/.ssh/id_rsa.pub
+    owner: root
+    group: root
+    mode: u=rw,g=r,o=r
+
+- name: Cloning jobs folder
+  git:
+    repo: "{{ jobsClonningRepo }}"
+    dest: /var/lib/jenkins/jobs
+    key_file: /root/.ssh/id_rsa
+    accept_hostkey: yes
+    force: yes
+
+- name: Change owner
+  file:
+    path: /var/lib/jenkins/jobs
+    owner: jenkins
+    group: jenkins
+    recurse: yes

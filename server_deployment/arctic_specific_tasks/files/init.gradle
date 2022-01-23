@@ -1,0 +1,82 @@
+//
+// https://help.sonatype.com/repomanager2/maven-and-other-build-tools/gradle
+//
+// added publish tasks support and Maven-Repo-Detection by René Fitzner, Darko Ostricki, Reza Labude
+//
+apply plugin:NexusRepositoryPlugin
+
+class NexusRepositoryPlugin implements Plugin<Gradle> {
+
+   final static String LOG_PREFIX = 'init.gradle/NexusRepositoryPlugin:'
+
+   // PROD Nexus server:
+   //repositoryManagerURL = 'https://nexus.secure.ifao.net:8443/repository'
+   // TEST Nexus server:
+   //repositoryManagerURL = 'http://10.69.182.116:8080/repository'
+
+   final static String SEARCHING_REPO_MGR_URL_PREFIX = 'https://nexus.secure.ifao.net:8443/repository'
+   final static String REPLACING_REPO_MGR_URL_PREFIX = 'https://nexus.arctic-test-net.alchemy.sofia.ifao.net:8443/repository'
+
+   /**
+    * the repo might be of kind org.gradle.api.artifacts.repositories.MavenArtifactRepository or be wrapped in a
+    * org.gradle.api.internal.artifacts.repositories.DefaultMavenArtifactRepository_Decorated instance
+    */
+   boolean isMavenRepository(def repo) {
+      if(repo == null) {
+         return false;
+      }
+      def clazzName = repo.getClass().getName()
+      return clazzName.contains('MavenArtifactRepository') || clazzName.contains('MavenLocalArtifactRepository')
+   }
+
+   final Closure RepoHandler = {
+      all { ArtifactRepository repo ->
+         if (isMavenRepository(repo)) {
+            def MavenArtifactRepository mavenRepo = (MavenArtifactRepository) repo
+            if (mavenRepo.name.toString().equals('MavenLocal')) {
+               println "$LOG_PREFIX $mavenRepo.name at $mavenRepo.url kept for local maven repository."
+            } else if (mavenRepo.url.toString().startsWith(REPLACING_REPO_MGR_URL_PREFIX)) {
+               println "$LOG_PREFIX $mavenRepo.name at $mavenRepo.url kept (is already equal to target Repository Manager URL)."
+            } else if (mavenRepo.url.toString().startsWith(SEARCHING_REPO_MGR_URL_PREFIX)) {
+               String strOldUrl = mavenRepo.url
+               mavenRepo.url = mavenRepo.url.toString().replace(SEARCHING_REPO_MGR_URL_PREFIX, REPLACING_REPO_MGR_URL_PREFIX)
+               println "$LOG_PREFIX $mavenRepo.name at $strOldUrl replaced by ${mavenRepo.url}."
+            } else {
+               println "$LOG_PREFIX no special handling for (${mavenRepo.getClass().getName()}) $mavenRepo.name at $mavenRepo.url defined."
+            }
+         } else {
+            println "$LOG_PREFIX (${repo.getClass().getName()}) $repo.name is untouched cause it's not a maven repository."
+         }
+      }
+   }
+
+   void apply(Gradle gradle) {
+      boolean printOnce = true
+      // Search for Maven repos and replace the target URL
+      gradle.allprojects { project ->
+         if (printOnce) {
+            println "$LOG_PREFIX found extensions properties in rootProject ..."
+
+            project.rootProject.extensions.getExtraProperties().getProperties().each() {
+               if (!it.toString().startsWith('//')) {
+                  println it.toString()
+               }
+            }
+            printOnce = false
+         }
+
+         println "\n$LOG_PREFIX Re-configuring repositories ..."
+
+         project.buildscript.repositories RepoHandler
+         project.repositories RepoHandler
+
+         project.afterEvaluate
+         {
+            if(project.hasProperty('publishing')) {
+               project.publishing.repositories RepoHandler
+               println "\n"
+            }
+         }
+      }
+   }
+}

@@ -1,0 +1,34 @@
+- name: Copy Self-Signed Cert, set permissions and set git sslCAPath and sslcainfo
+  copy:
+    src: ./files/ifao-root-ca.crt
+    dest: /etc/pki/tls/certs/ifao-root-ca.crt
+    mode: u=r,g=r,o=r
+ 
+- git_config:
+    name: http.sslCAPath
+    scope: system
+    value: /etc/pki/tls/certs
+
+- git_config:
+    name: http.sslcainfo
+    scope: system
+    value: /etc/pki/tls/certs/ifao-root-ca.crt
+
+- name: Set Jenkins global git settings
+  git_config:
+    name: user.email
+    scope: global
+    value: "{{ git_user_email }}"
+  become: true
+  become_method: su
+  become_user: jenkins
+  become_flags: '-s /bin/sh'
+
+- git_config:
+    name: user.name
+    scope: global
+    value: "{{ git_global_user_name }}"
+  become: true
+  become_method: su
+  become_user: jenkins
+  become_flags: '-s /bin/sh'

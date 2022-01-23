@@ -1,0 +1,23 @@
+# Install graphwiz version 2.30.1 (20180420.1509)
+- name: Install specific Version of graphwiz (should be version 2.30.1 (20180420.1509))
+  package:
+    name: graphviz.x86_64
+    state: present
+  tags:
+    - graph-package
+    - all-packages
+# jce_policy-8 not needed any more, but already included in the package below
+- name: Copy rpm file to server
+  copy:
+    src: jdk-8u172-linux-x64.rpm
+    dest: /tmp/jdk-linux-x64.rpm
+  tags:
+    - java-package
+    - all-packages
+- name: Install package.
+  package:
+    name: /tmp/jdk-linux-x64.rpm
+    state: present
+  tags:
+    - java-package
+    - all-packages

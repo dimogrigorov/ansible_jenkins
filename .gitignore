@@ -1,0 +1,7 @@
+*.swo
+*.swp
+*.retry
+*.cfg
+*.prop
+*.template
+*.pfx

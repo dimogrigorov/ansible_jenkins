@@ -1,0 +1,104 @@
+- hosts: jenkins-masters
+  become: yes
+  become_method: su
+  tasks:
+ 
+    - name: Check that the host machine match playbook dependencies
+      import_tasks: tasks/execution_dependencies.yml
+      delegate_to: localhost
+      tags:
+        - dependencies 
+
+    - name: Configute NTP syncronization
+      include_role:
+        name: geerlingguy.ntp
+        apply:
+          tags:
+            - ntp
+
+    - name: Install qemu guest agent
+      include_role: 
+        name: sbaerlocher.qemu-guest-agent
+        apply:
+          tags:
+            - qemu-guest
+
+    - name: Import firewall settings tasks
+      import_tasks: tasks/firewall_settings.yml
+      tags:
+        - firewall
+
+    - name: Install rpm packages needed by arctic team
+      import_tasks: arctic_specific_tasks/packages_installed_arctic.yml
+
+    - name: Install Jenkins Role
+      include_role:
+        name: geerlingguy.jenkins
+        apply:
+          tags:
+            - jenkins-role-install
+      tags:
+        - jenkins-role-install
+
+    - name: Creating linux users and set hostname for arctic test jenkins server
+      import_tasks: arctic_specific_tasks/linux_users_and_hostname_for_arctic.yml
+      tags:
+        - users-hostname
+
+# TBD:
+# disable root SSH login, edit /etc/ssh/sshd_config
+# change PermitRootLogin no
+# remove root password from /etc/shadow: (Create a backup copy. Be sure that you can log even if you mess up, for example from a rescue system.) Search for "root". Typically, the root entry looks similar to root:$X$SK5xfLB1ZW:0:0... There, delete the second field (everything between the first and second colon): root::0:0...
+
+    - name: Installing specific version of git
+      include_role:
+        name: geerlingguy.git
+        apply:
+          tags:
+            - git_installation   
+
+    - name: inlude git playbook installation and settings tasks
+      import_tasks: tasks/git_configuration.yml
+      tags:
+        - git_configuration
+
+    - name: Java client certificates over HTTPS/SSL
+      import_tasks: tasks/java_certificates_and_security_over_https_ssl.yml
+      tags:
+        - java-cert-https-ssl
+
+    - name: Cloning arctic jobs folder
+      import_tasks: arctic_specific_tasks/jobs_cloning_arctic.yml
+      tags:
+        - jobs-cloning
+
+    - name: Jenkins https setting and certificates
+      import_tasks: tasks/jenkins_https_settings_and_certs.yml
+      tags:
+        - https
+
+    - name: Copying the files arctic wishes to be placed
+      import_tasks: arctic_specific_tasks/install_arctic_config.yml
+      tags:  
+        - arctic-specific-files
+
+    - name: Wait for Jenkins to start up before proceeding.
+      command: "curl -D - --silent --max-time 5 -k https://localhost:{{ jenkins_https_port }}/cli/"
+      args:
+        warn: false
+      register: result
+      until: (result.stdout.find("403 Forbidden") != -1) or (result.stdout.find("200 OK") != -1) and (result.stdout.find("Please wait while") == -1)
+      retries: 60
+      delay: 5
+      changed_when: false
+      check_mode: false
+
+    - name: Include playbook for the plugin installation and version pinning
+      import_tasks: tasks/install_plugins_by_version.yml 
+      tags:
+        - jenkins-plugins
+
+    - name: Nfs share from QNAP store machine in the local subnet
+      import_tasks: tasks/nfs_client_and_mount.yml
+      tags:
+        - nfs

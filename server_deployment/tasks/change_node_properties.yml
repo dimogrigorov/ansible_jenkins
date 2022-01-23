@@ -1,0 +1,45 @@
+- name: Install python-lxml package
+  package:
+    name: python-lxml
+    state: present
+
+- name: Add a 'com.synopsys.arc.jenkinsci.plugins.jobrestrictions.nodes.JobRestrictionProperty' element to the 'nodeProperties' element
+  xml:
+    path: "/var/lib/jenkins/nodes/{{ slave_machine_name }}/config.xml"
+    xpath: /slave/nodeProperties/com.synopsys.arc.jenkinsci.plugins.jobrestrictions.nodes.JobRestrictionProperty  
+
+- name: Add an attribute
+  xml:
+    path: "/var/lib/jenkins/nodes/{{ slave_machine_name }}/config.xml"
+    xpath: /slave/nodeProperties/com.synopsys.arc.jenkinsci.plugins.jobrestrictions.nodes.JobRestrictionProperty
+    attribute: plugin
+    value: job-restrictions@0.8
+
+- name: Add a 'jobRestriction' element to the'com.synopsys.arc.jenkinsci.plugins.jobrestrictions.nodes.JobRestrictionProperty' element 
+  xml:
+    path: "/var/lib/jenkins/nodes/{{ slave_machine_name }}/config.xml"
+    xpath: /slave/nodeProperties/com.synopsys.arc.jenkinsci.plugins.jobrestrictions.nodes.JobRestrictionProperty/jobRestriction
+
+- name: Add an attribute
+  xml:
+    path: "/var/lib/jenkins/nodes/{{ slave_machine_name }}/config.xml"
+    xpath: /slave/nodeProperties/com.synopsys.arc.jenkinsci.plugins.jobrestrictions.nodes.JobRestrictionProperty/jobRestriction
+    attribute: class
+    value: com.synopsys.arc.jenkinsci.plugins.jobrestrictions.restrictions.job.RegexNameRestriction
+
+- name: Add a 'regexExpression' element to the 'jobRestriction' element
+  xml:
+    path: "/var/lib/jenkins/nodes/{{ slave_machine_name }}/config.xml"
+    xpath: /slave/nodeProperties/com.synopsys.arc.jenkinsci.plugins.jobrestrictions.nodes.JobRestrictionProperty/jobRestriction/regexExpression
+    value: "{{ job_restriction }}"
+
+- name: Add a 'checkShortName' element to the 'jobRestriction' element
+  xml:
+    path: "/var/lib/jenkins/nodes/{{ slave_machine_name }}/config.xml"
+    xpath: /slave/nodeProperties/com.synopsys.arc.jenkinsci.plugins.jobrestrictions.nodes.JobRestrictionProperty/jobRestriction/checkShortName
+    value: 'false'
+
+- name: Restart jenkins service
+  service:
+    name: jenkins
+    state: restarted

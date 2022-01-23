@@ -1,0 +1,22 @@
+allprojects {
+   ext {
+
+      // -----------------------------------------
+      // Arctic, Arctic_Configurations and Polaris
+      // -----------------------------------------
+
+      // Gradle can download the matching source file for any dependent jar file (see <artifact-name>-x.y.z-sources.jar).
+      // Therefore Eclipse does not need to de-compile a class file for debugging.
+      // Optional parameter (Polaris-default: true, Arctic-default: false).
+      downloadSources = false
+
+      // Gradle can download the matching javadoc file for any dependent jar file (see <artifact-name>-x.y.z-javadoc.jar).
+      // Therefore Eclipse can show the API JavaDoc description during programming.
+      // Sadly this parameter is set to a fixed value (false) in Polaris. Will be changed in the future.
+      // Optional parameter (Polaris-default: false, Arctic-default: true).
+      downloadJavadoc = false
+
+      {{ testRepositoryManagerURL }}
+
+   }
+}

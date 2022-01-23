@@ -1,0 +1,39 @@
+---
+fqdn: jenkins.arcticnet.alchemy.sofia.ifao.net
+jenkins_https_port: 8443
+
+git_install_path: "/usr"
+git_version: "1.8.3.1"
+git_use_https_for_clones: true
+git_global_user_name: "Jenkins PROD"
+git_user_email: "jenkins@jenkins.arcticnet.alchemy.sofia.ifao.net"
+
+ntp_servers: [forest.sofia.ifao.net, dc1.sofia.ifao.net, 10.69.177.253, 10.69.177.102]
+ntp_timezone: "Europe/Berlin"
+
+
+jenkins_hostname: localhost
+jenkins_home: /var/lib/jenkins
+jenkins_http_port: 8080
+jenkins_admin_username: admin
+jenkins_admin_password: admin
+jenkins_plugins_install_dependencies: true
+jenkins_version: "2.303.3"
+jenkins_pkg_url: "https://pkg.jenkins.io/redhat-stable"
+jenkins_repo_url: "https://pkg.jenkins.io/redhat-stable/jenkins.repo"
+jenkins_repo_key_url: "https://pkg.jenkins.io/redhat-stable/jenkins.io.key"
+# jenkins_admin_password_file: ""
+jenkins_java_options: "-Djenkins.install.runSetupWizard=false -Dhudson.model.ParametersAction.safeParameters=WORKDIRROOT,WORKDIR,POLARISBUILD,POLARIS_VERSION,GRADLE_COMMANDS,ANALYSE_GRADLE_COMMANDS,EMAIL_RECIPIENTS,TASK"
+# WORKAROUND for https://issues.jenkins.io/browse/JENKINS-65581
+#jenkins_java_options: "-Djsse.SSLEngine.acceptLargeFragments=true -Djenkins.install.runSetupWizard=false -Dhudson.model.ParametersAction.safeParameters=WORKDIRROOT,WORKDIR,POLARISBUILD,POLARIS_VERSION,GRADLE_COMMANDS,EMAIL_RECIPIENTS,TASK"
+#jenkins_args_options: "--httpsKeepAliveTimeout=300000"
+
+arctic_user: arctic
+arctic_password: PassToBeChanged
+
+testRepositoryManagerURL: ""
+
+jobsClonningRepo: "ssh://git@repository.secure.ifao.net:7443/scm/aci/jenkins_jobs_prod_server.git"
+requiredPfxCertName: "arcticnet.pfx"
+certAlias: "le-54742dc8-6015-4d38-adb2-d4dc7d87c3b6"
+nfs_source: "10.69.181.37:/var/nfsshare"

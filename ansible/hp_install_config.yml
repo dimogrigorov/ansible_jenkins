@@ -1,0 +1,13 @@
+---
+- hosts: perRouter
+  tasks:
+    - name: Clean inventory path
+      comware_install_config:
+        config_file='files/template.cfg'
+        commit_changes=true
+        username={{ username }}
+        password={{ password }}
+        hostname={{ initial_ip_address }}
+        #   no_log: True
+      failed_when: false
+      async: 10

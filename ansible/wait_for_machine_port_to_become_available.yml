@@ -1,0 +1,10 @@
+- hosts: localhost
+  tasks:
+    - name: Waiting for up to {{ timeout }} seconds for port {{ port_to_wait_for }} on {{ ip_address }} to become available..
+      wait_for:
+        port: "{{ port_to_wait_for }}"
+        host: "{{ ip_address }}"
+        #delay: 10
+        timeout: "{{ timeout }}"
+        #  no_log: True
+      failed_when: false

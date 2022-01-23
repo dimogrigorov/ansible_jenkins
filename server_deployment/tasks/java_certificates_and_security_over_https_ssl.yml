@@ -1,0 +1,14 @@
+- name: LDAPS - Apply i:fao LDAPS Security settings with java.security file and set permissions
+  copy:
+    src: ./files/java.security
+    dest: /usr/java/default/jre/lib/security/java.security
+    mode: u=r,g=r,o=rw
+
+- name: Import SSL certificate from ifao to a keystore, create it if it doesn't exist
+  java_cert:
+    cert_path: /etc/pki/tls/certs/ifao-root-ca.crt
+    keystore_path: /usr/java/jdk1.8.0_172-amd64/jre/lib/security/cacerts
+    cert_alias: ifao-root-ca
+    keystore_pass: changeit
+    keystore_create: yes
+    state: present

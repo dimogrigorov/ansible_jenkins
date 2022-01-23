@@ -1,0 +1,26 @@
+- name: Install python-lxml package
+  package:
+    name: python-lxml
+    state: present
+
+- name: Remove '/hudson/crumbIssuer' element 
+  xml:
+    path: "/var/lib/jenkins/config.xml"
+    xpath: /hudson/crumbIssuer
+    state: absent
+
+- name: Restart jenkins service
+  service:
+    name: jenkins
+    state: restarted
+
+- name: Wait for Jenkins to start up before proceeding.
+  command: "curl -D - --silent --max-time 5 -k https://localhost:{{ jenkins_https_port }}/cli/"
+  args:
+    warn: false
+  register: result
+  until: (result.stdout.find("403 Forbidden") != -1) or (result.stdout.find("200 OK") != -1) and (result.stdout.find("Please wait while") == -1)
+  retries: 60
+  delay: 5
+  changed_when: false
+  check_mode: false
