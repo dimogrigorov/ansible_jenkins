@@ -1,0 +1,52 @@
+---
+fqdn: jenkins.arctic-test-net.alchemy.sofia.ifao.net
+jenkins_https_port: 8443
+
+git_install_path: "/usr"
+git_version: "1.8.3.1"
+git_use_https_for_clones: true
+git_global_user_name: "Jenkins TEST"
+git_user_email: "jenkins@jenkins.arctic-test-net.alchemy.sofia.ifao.net"
+
+ntp_servers: [forest.sofia.ifao.net, dc1.sofia.ifao.net, 10.69.177.253, 10.69.177.102]
+ntp_timezone: "Europe/Berlin"
+
+
+jenkins_hostname: localhost
+jenkins_home: /var/lib/jenkins
+jenkins_http_port: 8080
+jenkins_admin_username: admin
+jenkins_admin_password: admin
+jenkins_plugins_install_dependencies: true
+jenkins_version: "2.303.3"
+jenkins_pkg_url: "https://pkg.jenkins.io/redhat-stable"
+jenkins_repo_url: "https://pkg.jenkins.io/redhat-stable/jenkins.repo"
+jenkins_repo_key_url: "https://pkg.jenkins.io/redhat-stable/jenkins.io.key"
+# jenkins_admin_password_file: ""
+jenkins_java_options: "-Djenkins.install.runSetupWizard=false -Dhudson.model.ParametersAction.safeParameters=WORKDIRROOT,WORKDIR,POLARISBUILD,POLARIS_VERSION,GRADLE_COMMANDS,ANALYSE_GRADLE_COMMANDS,EMAIL_RECIPIENTS,TASK"
+# WORKAROUND for https://issues.jenkins.io/browse/JENKINS-65581
+#jenkins_java_options: "-Djsse.SSLEngine.acceptLargeFragments=true -Djenkins.install.runSetupWizard=false -Dhudson.model.ParametersAction.safeParameters=WORKDIRROOT,WORKDIR,POLARISBUILD,POLARIS_VERSION,GRADLE_COMMANDS,EMAIL_RECIPIENTS,TASK"
+#jenkins_args_options: "--httpsKeepAliveTimeout=300000"
+
+arctic_user: arctic-test
+testRepositoryManagerURL: >
+  // -----------------------
+        // Almost all repositories
+        // -----------------------
+
+        // FOR ADVANCED USERS ONLY. YOU HAVE TO KNOW WHAT YOU DO.
+        // Defines the URL of the Maven Repository Manager for resolving and publishing Maven artifacts. This will work only
+        // for Gradle projects which have implemented the parameter "repositoryManagerURL" in their build.gradle and
+        // gradle.properties files.
+        // Optional parameter (default is Nexus-Secure):
+        // PROD Nexus server:
+        //repositoryManagerURL = 'https://nexus.secure.ifao.net:8443/repository'
+        // TEST Nexus server:
+        //repositoryManagerURL = 'http://10.69.182.116:8080/repository'
+
+        repositoryManagerURL = 'https://nexus.arctic-test-net.alchemy.sofia.ifao.net:8443/repository'
+
+jobsClonningRepo: "ssh://git@repository.secure.ifao.net:7999/aci/jenkins_jobs_test_server.git"
+requiredPfxCertName: "test-net.pfx"
+certAlias: "le-60c95358-7eb2-4472-820c-baf5db8188c6"
+nfs_source: "10.69.182.123:/var/nfsshare"

@@ -1,0 +1,23 @@
+[jenkins:children]
+jenkins-masters
+jenkins-slaves
+
+[jenkins-masters]
+arctic-Jenkins ansible_host=10.69.181.34
+
+[jenkins-slaves:children]
+Arctic2ExecutorSlaveVMs
+
+[Arctic2ExecutorSlaveVMs:vars]
+#template_vmid=10001
+num_executors=2
+env_shell_file_name=arctic_2executor_slave_env_shell
+job_restriction="(?!(.*Build.*))(.*)"
+
+# -----------------------------------------------------------------------
+
+[Arctic2ExecutorSlaveVMs]
+arctic-JenkinsSlave1 label=agent1 slave_machine_name=jenkins-node1 ansible_host=10.69.181.35
+arctic-JenkinsSlave2 label=agent2 slave_machine_name=jenkins-node2 ansible_host=10.69.181.36
+arctic-JenkinsSlave3 label=agent3 slave_machine_name=jenkins-node3 ansible_host=10.69.181.38
+arctic-JenkinsSlave4 label=agent4 slave_machine_name=jenkins-node4 ansible_host=10.69.181.39

@@ -1,0 +1,27 @@
+[SlaveVMsGroup:children]
+Arctic4CoreSlaveVMs
+Arctic2CoreSlaveVMs
+
+[SlaveVMsGroup:vars]
+jenkins_master=10.69.186.138
+
+[Arctic4CoreSlaveVMs:vars]
+template_vmid=10001
+numExecutors=4
+labelString=arctic4CoreSlave
+
+[Arctic2CoreSlaveVMs:vars]
+numExecutors=2
+labelString=arctic2CoreSlave
+template_vmid=10001
+
+
+# -----------------------------------------------------------------------
+
+[Arctic2CoreSlaveVMs]
+arctic2CoreSlaveVM1 vmid=20054 name=arctic2CoreSlaveVM1 ansible_host=10.69.183.234
+arctic2CoreSlaveVM2 vmid=20055 name=arctic2CoreSlaveVM2 ansible_host=10.69.183.235
+
+[Arctic4CoreSlaveVMs]
+arctic4CoreSlaveVM1 vmid=20051 name=arctic4CoreSlaveVM1 ansible_host=10.69.183.236
+arctic4CoreSlaveVM2 vmid=20052 name=arctic4CoreSlaveVM2 ansible_host=10.69.183.237

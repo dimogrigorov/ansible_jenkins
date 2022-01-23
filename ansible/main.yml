@@ -1,0 +1,20 @@
+## 1. Creating user defined machines from the provided inventory
+- import_playbook: create_vm_from_template.yml host=perRouter
+
+## 2. Stopping Perimeter Router
+- import_playbook: put_vm_in_state.yml host=perRouter state=stopped
+
+## 3. Starting Perimeter Router
+- import_playbook: put_vm_in_state.yml host=perRouter state=started
+
+## 4. Generate cfg file for the perimeter router
+- import_playbook: prepare_hp_config_file.yml
+
+## 5. Generate static ip-mac entries in the perimeter DHCP router
+- import_playbook: generate_dhcp_entries.yml
+
+## 6. Waiting for Perimeter-router to become available
+- import_playbook: wait_for_machine_port_to_become_available.yml timeout=900 port_to_wait_for=22 ip_address={{ hostvars['perRouter']['initial_ip_address'] }}
+
+## 7. Applying the generated configuration to perimeter router
+- import_playbook: hp_install_config.yml

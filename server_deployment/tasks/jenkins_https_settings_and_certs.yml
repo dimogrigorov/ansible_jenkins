@@ -1,0 +1,57 @@
+- name: Copy SSL Cert and set permissions
+  copy:
+    src: "./files/{{ requiredPfxCertName }}"
+    dest: /root/arctic.pfx
+    owner: jenkins
+    mode: u=r,g=r,o=r
+
+# For listing the cert contents and finding the alias keytool -list -v -keystore files/test-net.pfx -storetype PKCS12
+- name: Import SSL certificate to a keystore, create it if it doesn't exist
+  java_cert:
+    pkcs12_path: /root/arctic.pfx
+    pkcs12_password: devops@ifao.net
+    keystore_path: /var/lib/jenkins/arctic.jks
+    cert_alias: le-60c95358-7eb2-4472-820c-baf5db8188c6
+    pkcs12_alias: "{{ certAlias }}"
+    keystore_pass: changeit
+    keystore_create: yes
+    state: present
+
+### Consider deleting  /root/arctic.pfx
+
+# change configfile for https
+- name: change jenkins configfile for no http
+  lineinfile:
+    path: /etc/sysconfig/jenkins
+    regexp: '^JENKINS_PORT='
+    line: 'JENKINS_PORT="-1"'
+    state: present
+
+# change configfile for https
+- name: change jenkins configfile for https port 8443
+  lineinfile:
+    path: /etc/sysconfig/jenkins
+    regexp: '^JENKINS_HTTPS_PORT='
+    line: 'JENKINS_HTTPS_PORT="8443"'
+    state: present
+
+# change configfile for https
+- name: change configfile to use the right keystore
+  lineinfile:
+    path: /etc/sysconfig/jenkins
+    regexp: '^JENKINS_HTTPS_KEYSTORE='
+    line: 'JENKINS_HTTPS_KEYSTORE="/var/lib/jenkins/arctic.jks"'
+    state: present
+
+# change jenkins configfile with keystore pass
+- name: change jenkins config to access keystore for https cert
+  lineinfile:
+    path: /etc/sysconfig/jenkins
+    regexp: '^JENKINS_HTTPS_KEYSTORE_PASSWORD'
+    line: 'JENKINS_HTTPS_KEYSTORE_PASSWORD="changeit"'
+    state: present
+
+- name: Restart jenkins service with new values
+  systemd:
+    name: jenkins
+    state: restarted

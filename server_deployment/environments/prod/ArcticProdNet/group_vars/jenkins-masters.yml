@@ -1,0 +1,336 @@
+# Variable setup.
+my_jenkins_plugins:
+    ace-editor:
+            version: "1.1"
+    analysis-model-api:
+            version: "10.6.0"
+    ansicolor:
+            version: "1.0.0"
+    ant:
+            version: "1.12"
+    antisamy-markup-formatter:
+            version: "2.4"
+    apache-httpcomponents-client-4-api:
+            version: "4.5.13-1.0"
+    audit-trail:
+            version: "3.10"
+    authentication-tokens:
+            version: "1.4"
+    authorize-project:
+            version: "1.4.0"
+    badge:
+            version: "1.9"
+    basic-branch-build-strategies:
+            version: "1.3.2"
+    blueocean:
+            version: "1.25.1"
+    blueocean-autofavorite:
+            version: "1.2.4"
+    blueocean-bitbucket-pipeline:
+            version: "1.25.1"
+    blueocean-commons:
+            version: "1.25.1"
+    blueocean-config:
+            version: "1.25.1"
+    blueocean-core-js:
+            version: "1.25.1"
+    blueocean-dashboard:
+            version: "1.25.1"
+    blueocean-display-url:
+            version: "2.4.1"
+    blueocean-events:
+            version: "1.25.1"
+    blueocean-git-pipeline:
+            version: "1.25.1"
+    blueocean-github-pipeline:
+            version: "1.25.1"
+    blueocean-i18n:
+            version: "1.25.1"
+    blueocean-jira:
+            version: "1.25.1"
+    blueocean-jwt:
+            version: "1.25.1"
+    blueocean-personalization:
+            version: "1.25.1"
+    blueocean-pipeline-api-impl:
+            version: "1.25.1"
+    blueocean-pipeline-editor:
+            version: "1.25.1"
+    blueocean-pipeline-scm-api:
+            version: "1.25.1"
+    blueocean-rest:
+            version: "1.25.1"
+    blueocean-rest-impl:
+            version: "1.25.1"
+    blueocean-web:
+            version: "1.25.1"
+    bootstrap4-api:
+            version: "4.6.0-3"
+    bootstrap5-api:
+            version: "5.1.3-1"
+    bouncycastle-api:
+            version: "2.25"
+    branch-api:
+            version: "2.7.0"
+    build-blocker-plugin:
+            version: "1.7.7"
+    build-name-setter:
+            version: "2.2.0"
+    build-pipeline-plugin:
+            version: "1.5.8"
+    build-timeout:
+            version: "1.20"
+    build-user-vars-plugin:
+            version: "1.8"
+    caffeine-api:
+            version: "2.9.2-29.v717aac953ff3"
+    checks-api:
+            version: "1.7.2"
+    cloudbees-bitbucket-branch-source:
+            version: "2.9.11"
+    cloudbees-folder:
+            version: "6.16"
+    command-launcher:
+            version: "1.6"
+    conditional-buildstep:
+            version: "1.4.1"
+    credentials:
+            version: "2.6.1"
+    credentials-binding:
+            version: "1.27"
+    dashboard-view:
+            version: "2.18"
+    data-tables-api:
+            version: "1.11.3-4"
+    dependency-check-jenkins-plugin:
+            version: "5.1.1"
+    dependency-track:
+            version: "4.0.0"
+    depgraph-view:
+            version: "1.0.5"
+    display-url-api:
+            version: "2.3.5"
+    docker-commons:
+            version: "1.17"
+    docker-workflow:
+            version: "1.26"
+    durable-task:
+            version: "1.39"
+    echarts-api:
+            version: "5.2.2-1"
+    email-ext:
+            version: "2.84"
+    envinject:
+            version: "2.4.0"
+    envinject-api:
+            version: "1.8"
+    extended-choice-parameter:
+            version: "0.82"
+    extensible-choice-parameter:
+            version: "1.8.0"
+    external-monitor-job:
+            version: "1.7"
+    favorite:
+            version: "2.3.3"
+    font-awesome-api:
+            version: "5.15.4-1"
+    forensics-api:
+            version: "1.6.0"
+    git:
+            version: "4.10.0"
+    git-client:
+            version: "3.10.0"
+    git-forensics:
+            version: "1.3.0"
+    git-server:
+            version: "1.10"
+    github:
+            version: "1.34.1"
+    github-api:
+            version: "1.133"
+    github-branch-source:
+            version: "2.11.3"
+    global-build-stats:
+            version: "1.5"
+    gradle:
+            version: "1.37.1"
+    groovy:
+            version: "2.4"
+    groovy-postbuild:
+            version: "2.5"
+    handlebars:
+            version: "3.0.8"
+    handy-uri-templates-2-api:
+            version: "2.1.8-1.0"
+    htmlpublisher:
+            version: "1.27"
+    ignore-committer-strategy:
+            version: "1.0.4"
+    jackson2-api:
+            version: "2.13.0-230.v59243c64b0a5"
+    jacoco:
+            version: "3.3.0"
+    javadoc:
+            version: "1.6"
+    jdk-tool:
+            version: "1.5"
+    jenkins-design-language:
+            version: "1.25.1"
+    jira:
+            version: "3.6"
+    jjwt-api:
+            version: "0.11.2-9.c8b45b8bb173"
+    job-restrictions:
+            version: "0.8"
+    jobConfigHistory:
+            version: "2.28.1"
+    jquery:
+            version: "1.12.4-1"
+    jquery-detached:
+            version: "1.2.1"
+    jquery3-api:
+            version: "3.6.0-2"
+    jsch:
+            version: "0.1.55.2"
+    junit:
+            version: "1.53"
+    ldap:
+            version: "2.7"
+    locale:
+            version: "1.4"
+    lockable-resources:
+            version: "2.12"
+    mailer:
+            version: "1.34"
+    mapdb-api:
+            version: "1.0.9.0"
+    mashup-portlets-plugin:
+            version: "1.1.2"
+    matrix-auth:
+            version: "2.6.8"
+    matrix-project:
+            version: "1.19"
+    maven-plugin:
+            version: "3.15.1"
+    momentjs:
+            version: "1.1.1"
+    monitoring:
+            version: "1.88.0"
+    multiple-scms:
+            version: "0.8"
+    nested-view:
+            version: "1.21"
+    nodelabelparameter:
+            version: "1.9.2"
+    okhttp-api:
+            version: "4.9.2-20211102"
+    pam-auth:
+            version: "1.6.1"
+    parameterized-trigger:
+            version: "2.41"
+    pipeline-aggregator-view:
+            version: "1.11"
+    pipeline-build-step:
+            version: "2.15"
+    pipeline-github-lib:
+            version: "1.0"
+    pipeline-graph-analysis:
+            version: "1.11"
+    pipeline-input-step:
+            version: "2.12"
+    pipeline-milestone-step:
+            version: "1.3.2"
+    pipeline-model-api:
+            version: "1.9.2"
+    pipeline-model-definition:
+            version: "1.9.2"
+    pipeline-model-extensions:
+            version: "1.9.2"
+    pipeline-rest-api:
+            version: "2.19"
+    pipeline-stage-step:
+            version: "2.5"
+    pipeline-stage-tags-metadata:
+            version: "1.9.2"
+    pipeline-stage-view:
+            version: "2.19"
+    pipeline-utility-steps:
+            version: "2.10.0"
+    plain-credentials:
+            version: "1.7"
+    plugin-util-api:
+            version: "2.5.1"
+    popper-api:
+            version: "1.16.1-2"
+    popper2-api:
+            version: "2.10.2-1"
+    promoted-builds:
+            version: "3.10"
+    pubsub-light:
+            version: "1.16"
+    rebuild:
+            version: "1.32"
+    resource-disposer:
+            version: "0.16"
+    run-condition:
+            version: "1.5"
+    saferestart:
+            version: "0.3"
+    saml:
+            version: "2.0.9"
+    scm-api:
+            version: "2.6.5"
+    script-security:
+            version: "1.78"
+    snakeyaml-api:
+            version: "1.29.1"
+    sse-gateway:
+            version: "1.24"
+    ssh-credentials:
+            version: "1.19"
+    ssh-slaves:
+            version: "1.33.0"
+    sshd:
+            version: "3.1.0"
+    structs:
+            version: "1.23"
+    thinBackup:
+            version: "1.10"
+    timestamper:
+            version: "1.13"
+    token-macro:
+            version: "267.vcdaea6462991"
+    trilead-api:
+            version: "1.0.13"
+    variant:
+            version: "1.4"
+    warnings-ng:
+            version: "9.7.0"
+    windows-slaves:
+            version: "1.8"
+    workflow-aggregator:
+            version: "2.6"
+    workflow-api:
+            version: "2.47"
+    workflow-basic-steps:
+            version: "2.24"
+    workflow-cps:
+            version: "2633.v6baeedc13805"
+    workflow-cps-global-lib:
+            version: "545.v7b28cce323cf"
+    workflow-cps-global-lib-http:
+            version: "1.13.0"
+    workflow-durable-task-step:
+            version: "2.40"
+    workflow-job:
+            version: "2.42"
+    workflow-multibranch:
+            version: "2.26"
+    workflow-scm-step:
+            version: "2.13"
+    workflow-step-api:
+            version: "2.24"
+    workflow-support:
+            version: "3.8"
+    ws-cleanup:
+            version: "0.39"

@@ -1,0 +1,11 @@
+[Unit]
+After=network.target
+Description=Starts JNLP Connection to Master Jenkins
+
+[Service]
+User=jenkins
+ExecStart=/bin/bash -c "source /var/lib/jenkins/bin/launch-agent.sh && java -jar /var/lib/jenkins/bin/agent.jar -jnlpUrl https://{{ fqdn }}:8443/computer/{{ slave_machine_name }}/slave-agent.jnlp -secret {{ slave_secret }}"
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target

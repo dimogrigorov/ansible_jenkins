@@ -1,0 +1,58 @@
+# gradle setup
+- name: Creates .gradle directory
+  file:
+    path: /var/lib/jenkins/.gradle
+    owner: jenkins
+    group: jenkins
+    state: directory
+
+- name: Copy init.gradle files and set permissions
+  copy:
+    src: ./files/init.gradle
+    dest: /var/lib/jenkins/.gradle/init.gradle
+    owner: jenkins
+    group: jenkins
+    mode: u=r,g=r,o=r
+  tags:
+    - arctictest-specific-files
+
+- name: Copy gradle.properties files and set permissions
+  copy:
+    src: ./files/gradle.properties
+    dest: /var/lib/jenkins/.gradle/gradle.properties
+    owner: jenkins
+    group: jenkins
+    mode: u=r,g=r,o=r
+
+- name: Creates .gradle/init.d directory
+  file:
+    path: /var/lib/jenkins/.gradle/init.d
+    owner: jenkins
+    group: jenkins
+    state: directory
+
+- name: Create globalProperties.gradle from template
+  template:
+    src: arctic_specific_tasks/templates/globalProperties.gradle.j2
+    dest: /var/lib/jenkins/.gradle/init.d/globalProperties.gradle
+    owner: jenkins
+    group: jenkins
+    mode: u=r,g=r,o=r
+
+# maven setup
+- name: Creates maven directory
+  file:
+    path: /var/lib/jenkins/.m2
+    owner: jenkins
+    group: jenkins
+    state: directory
+
+- name: Create setting.xml from template
+  template:
+    src: arctic_specific_tasks/templates/settings.xml.j2
+    dest: /var/lib/jenkins/.m2/settings.xml
+    #  If force = no, the file will only be transferred if the destination does not exist. This prevents manual changes e.g. in case of password changes.
+    force: no
+    owner: jenkins
+    group: jenkins
+    mode: u=rw,g=r,o=r

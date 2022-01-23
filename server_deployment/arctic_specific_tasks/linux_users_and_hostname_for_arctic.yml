@@ -1,0 +1,24 @@
+- hostname:
+    name: "{{ fqdn }}"
+
+### Begin USER creation block
+# Wheel Users:  arctic, sascha, dimo according to spec. Password are currently not save.
+- name: Create a Arctic CLI login user
+  user:
+    name: arctic
+    password: '$6$zs04EwvbBHs$9bCsqQQadj5iJz5m6sZ8Lq8BTRsXs9G3AFD.Kdh83cRPFq88gtEdxxj0TIltpk8DsLT0IeMni68OJUBZFuYYw1'
+    groups: wheel          # Empty by default.
+    state: present
+    shell: /bin/bash       # Defaults to /bin/bash
+    system: no             # Defaults to no
+    createhome: yes        # Defaults to yes
+
+- name: Create a Dimo CLI login user
+  user:
+    name: dimo
+    password: '$6$ivz1tYudxF$xANOp0SCpsSo9IGDi1coxDt0XtY1Woy23jqK0u123R.aryNeHiEIW/tF3iLdqro4vc98VwqTfciehi0yJmHLw/'
+    groups: wheel          # Empty by default.
+    state: present
+    shell: /bin/bash       # Defaults to /bin/bash
+    system: no             # Defaults to no
+    createhome: yes        # Defaults to yes

@@ -1,0 +1,5 @@
+proxmox_node_ip: 10.69.176.162
+from_vmid: 20050
+to_vmid: 20100
+node_name: alchemy2
+subnetmask: 255.255.255.248

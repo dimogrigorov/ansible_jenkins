@@ -1,0 +1,58 @@
+- name: Stop and disable firewalld.
+  service:
+    name: firewalld
+    state: started
+    enabled: false
+
+- name: remove ipv6 service
+  firewalld:
+    service: dhcpv6-client
+    permanent: true
+    state: disabled
+    immediate: yes
+
+- name: open ssh console port
+  firewalld:
+    port: 22/tcp
+    permanent: true
+    state: enabled
+    immediate: yes
+
+- name: open https port
+  firewalld:
+    port: 8443/tcp
+    permanent: true
+    state: enabled
+    immediate: yes
+
+- name: open http port
+  firewalld:
+    port: 8080/tcp
+    permanent: true
+    state: enabled
+    immediate: yes
+
+### Setting this Port in Jenkins need to happen statically
+- name: open jnlp agent port
+  firewalld:
+    port: 43973/tcp
+    permanent: true
+    state: enabled
+    immediate: yes
+
+- name: Redirect port 8080 to 8443 with Rich Rule
+  firewalld:
+    rich_rule: rule family={{ item }} forward-port port=8080 protocol=tcp to-port=8443
+    zone: public
+    permanent: yes
+    immediate: yes
+    state: enabled
+  with_items:
+    - ipv4
+    - ipv6
+
+- name: Start and enable firewalld.
+  service:
+    name: firewalld
+    state: started
+    enabled: true

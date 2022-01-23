@@ -1,0 +1,56 @@
+- pause:
+    prompt: "Jenkins admin username?"
+  register: prompt
+  no_log: true
+  run_once: yes
+
+- set_fact:
+    jenkins_user: "{{prompt.user_input}}"
+  no_log: true
+  run_once: yes
+
+- pause:
+    prompt: "Jenkins admin password?"
+    echo: no
+  register: prompt
+  no_log: true
+  run_once: yes
+
+- set_fact:
+    jenkins_password: "{{prompt.user_input}}"
+  no_log: true
+  run_once: yes
+
+- name: Handle timeout errors here
+  block:
+    - name: Install plugins with a specific version
+      jenkins_plugin:
+        name: "{{ item.key }}"
+        version: "{{ item.value['version'] }}"
+        url_username: "{{ jenkins_user }}"
+        url_password: "{{ jenkins_password }}"
+        url: https://{{ ansible_ssh_host }}:{{ jenkins_https_port }}
+        validate_certs: no
+      when: >
+        'version' in item.value
+      with_dict: "{{ my_jenkins_plugins }}"
+  always:
+    - name: Restart Jenkins
+      service:
+        name: jenkins
+        state: restarted
+
+    - name: Wait for Jenkins to start up
+      uri:
+        url: https://{{ ansible_ssh_host }}:{{ jenkins_https_port }}
+        status_code: 200, 403
+        url_username: "{{ jenkins_user }}"
+        url_password: "{{ jenkins_password }}"
+        timeout: 5
+        validate_certs: False
+      register: jenkins_service_status
+      retries: 60
+      delay: 5
+      until: >
+        'status' in jenkins_service_status and
+         (jenkins_service_status['status'] == 200 or jenkins_service_status['status'] == 403)
